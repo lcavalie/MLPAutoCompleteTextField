@@ -233,7 +233,7 @@ withAutoCompleteString:(NSString *)string
     
     if([self.autoCompleteDelegate respondsToSelector:@selector(autoCompleteTextField:shouldConfigureCell:withAutoCompleteString:withAttributedString:forRowAtIndexPath:)])
     {
-        if(![self.autoCompleteDelegate autoCompleteTextField:self shouldConfigureCell:cell withAutoCompleteString:string withAttributedString:boldedString forRowAtIndexPath:indexPath])
+        if([self.autoCompleteDelegate autoCompleteTextField:self shouldConfigureCell:cell withAutoCompleteString:string withAttributedString:boldedString forRowAtIndexPath:indexPath])
         {
             return;
         }
