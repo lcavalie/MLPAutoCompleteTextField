@@ -19,6 +19,7 @@
 
 @implementation DEMOViewController
 
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [self.view setAlpha:0];
@@ -42,16 +43,40 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidHideWithNotification:) name:UIKeyboardDidHideNotification object:nil];
     
+    [self.typeSwitch addTarget:self
+                        action:@selector(typeDidChange:)
+              forControlEvents:UIControlEventValueChanged];
+    
     //Supported Styles:
     //[self.autocompleteTextField setBorderStyle:UITextBorderStyleBezel];
-    //TODO[self.autocompleteTextField setBorderStyle:UITextBorderStyleLine];
+    //[self.autocompleteTextField setBorderStyle:UITextBorderStyleLine];
     //[self.autocompleteTextField setBorderStyle:UITextBorderStyleNone];
     [self.autocompleteTextField setBorderStyle:UITextBorderStyleRoundedRect];
-    
+
+    //[self.autocompleteTextField setShowAutoCompleteTableWhenEditingBegins:YES];
+    //[self.autocompleteTextField setAutoCompleteTableBackgroundColor:[UIColor colorWithWhite:1 alpha:0.5]];
     
     //You can use custom TableViewCell classes and nibs in the autocomplete tableview if you wish.
-    [self.autocompleteTextField registerAutoCompleteCellClass:[DEMOCustomAutoCompleteCell class]
-                                       forCellReuseIdentifier:@"CustomCellId"];
+    //This is only supported in iOS 6.0, in iOS 5.0 you can set a custom NIB for the cell
+    if ([[[UIDevice currentDevice] systemVersion] compare:@"6.0" options:NSNumericSearch] != NSOrderedAscending) {
+        [self.autocompleteTextField registerAutoCompleteCellClass:[DEMOCustomAutoCompleteCell class]
+                                           forCellReuseIdentifier:@"CustomCellId"];
+    }
+    else{
+        //Turn off bold effects on iOS 5.0 as they are not supported and will result in an exception
+        self.autocompleteTextField.applyBoldEffectToAutoCompleteSuggestions = NO;
+    }
+    
+    
+}
+
+- (void)typeDidChange:(UISegmentedControl *)sender
+{
+    if(sender.selectedSegmentIndex == 0){
+        [self.autocompleteTextField setAutoCompleteTableAppearsAsKeyboardAccessory:NO];
+    } else {
+        [self.autocompleteTextField setAutoCompleteTableAppearsAsKeyboardAccessory:YES];
+    }
     
 }
 
@@ -61,7 +86,7 @@
 {
     [UIView animateWithDuration:0.3
                           delay:0
-                        options:UIViewAnimationCurveEaseOut
+                        options:UIViewAnimationCurveEaseOut|UIViewAnimationOptionBeginFromCurrentState
                      animations:^{
                          CGPoint adjust;
                          switch (self.interfaceOrientation) {
@@ -79,6 +104,7 @@
                          [self.view setCenter:newCenter];
                          [self.author setAlpha:0];
                          [self.demoTitle setAlpha:0];
+                         [self.typeSwitch setAlpha:0];
                          
                      }
                      completion:nil];
@@ -89,7 +115,7 @@
 {
     [UIView animateWithDuration:0.3
                           delay:0
-                        options:UIViewAnimationCurveEaseOut
+                        options:UIViewAnimationCurveEaseOut|UIViewAnimationOptionBeginFromCurrentState
                      animations:^{
                          CGPoint adjust;
                          switch (self.interfaceOrientation) {
@@ -107,6 +133,7 @@
                          [self.view setCenter:newCenter];
                          [self.author setAlpha:1];
                          [self.demoTitle setAlpha:1];
+                         [self.typeSwitch setAlpha:1];
                      }
                      completion:nil];
     
@@ -132,12 +159,38 @@
 
 #pragma mark - MLPAutoCompleteTextField DataSource
 
+
+//example of asynchronous fetch:
+- (void)autoCompleteTextField:(MLPAutoCompleteTextField *)textField
+ possibleCompletionsForString:(NSString *)string
+            completionHandler:(void (^)(NSArray *))handler
+{
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
+    dispatch_async(queue, ^{
+        if(self.simulateLatency){
+            CGFloat seconds = arc4random_uniform(4)+arc4random_uniform(4); //normal distribution
+            NSLog(@"sleeping fetch of completions for %f", seconds);
+            sleep(seconds);
+        }
+        
+        NSArray *completions;
+        if(self.testWithAutoCompleteObjectsInsteadOfStrings){
+            completions = [self allCountryObjects];
+        } else {
+            completions = [self allCountries];
+        }
+        
+        handler(completions);
+    });
+}
+
+/*
 - (NSArray *)autoCompleteTextField:(MLPAutoCompleteTextField *)textField
       possibleCompletionsForString:(NSString *)string
 {
     
     if(self.simulateLatency){
-        CGFloat seconds = arc4random_uniform(4);
+        CGFloat seconds = arc4random_uniform(4)+arc4random_uniform(4); //normal distribution
         NSLog(@"sleeping fetch of completions for %f", seconds);
         sleep(seconds);
     }
@@ -151,7 +204,8 @@
 
     return completions;
 }
-
+*/
+ 
 - (NSArray *)allCountryObjects
 {
     if(!self.countryObjects){
@@ -437,6 +491,7 @@
           shouldConfigureCell:(UITableViewCell *)cell
        withAutoCompleteString:(NSString *)autocompleteString
          withAttributedString:(NSAttributedString *)boldedString
+        forAutoCompleteObject:(id<MLPAutoCompletionObject>)autocompleteObject
             forRowAtIndexPath:(NSIndexPath *)indexPath;
 {
     //This is your chance to customize an autocomplete tableview cell before it appears in the autocomplete tableview

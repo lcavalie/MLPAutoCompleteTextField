@@ -2,11 +2,13 @@ MLPAutoCompleteTextField
 ===================
 >"We believe that every tap a user makes drains a tiny bit of their energy and patience. Typing is one of the biggest expenditures of both. What we needed was a textfield that could be completed in as few keystrokes as possible even for very long words. Thus _MLPAutoCompleteTextField_ was born."
 
-![Alt text](/autocompleteDemo.png "Screenshot")
+![Alt text](/autocompleteDemo.png "Screenshot")|![Alt text](/keyboardDemo.png "Screenshot")
 
 About
 ---------
-_MLPAutoCompleteTextField_ is a subclass of _UITextField_ that behaves like a typical _UITextField_ with one notable exception: it manages a drop down table of autocomplete suggestions that update as the user types. Its behavior may remind you of Google's autocomplete search feature.
+_MLPAutoCompleteTextField_ is a subclass of _UITextField_ that behaves like a typical _UITextField_ with one notable exception: it manages a drop down table of autocomplete suggestions that update as the user types. Its behavior may remind you of Google's autocomplete search feature. As of version 1.3 there is also support for showing the autocomplete table as an accessory view of the keyboard.
+
+From version 1.5 and above _MLPAutoCompleteTextField_ is compatible with iOS 5.0 or greater. 
 
 ####Example:
   >A user is required to enter a long and complicated chemical name into a textfield. With an autocomplete textfield, chemical names that closely match her entered string can be displayed as she types, and if she sees the chemical name she was thinking of she can select it and have it entered into the textfield automatically. This reduces the amount of typing she has to do and helps prevent errors. All this can occur within a single view and without the need for a search tableview controller.
@@ -27,13 +29,20 @@ The goal for _MLPAutoCompleteTextField_ is to create an autocomplete textfield t
 You should now have a working _MLPAutoCompleteTextField_ at this point. 
 
 
+Autocomplete as a Keyboard Input Accessory
+--------
+
+As of version 1.3 of _MLPAutoCompleteTextField_, the autocomplete suggestions can be shown as a tableview that appears above the keyboard. To activate this feature, set the `autoCompleteTableAppearsAsKeyboardAccessory` property of the _MLPAutoCompleteTextField_ instance to `TRUE`.
+
+
+
 Cocoapods
 -------
 CocoaPods are the best way to manage library dependencies in Objective-C projects.
 Learn more at http://cocoapods.org
 
 Add this to your podfile to add the MLPAutoCompleteTextField to your project.
-`pod 'MLPAutoCompleteTextField', '~> 1.2'`
+`pod 'MLPAutoCompleteTextField', '~> 1.5'`
 
 
 
@@ -64,6 +73,10 @@ Known Issues
 
 What to Expect in Future Updates
 -----------
+
++ _iOS 7 Styling_: This class will be updated to match the design language of iOS 7 in iOS 7 apps.
+
++ _Horizontal Scrolling Suggestions_: There will be an option to display autocomplete terms in a slim, horizontally scrollable list above the keyboard, like the autocomplete on many Android devices.
 
 + _Weighted Suggestions_: In some cases, there may exist multiple autocomplete strings that are all equally possible completions for the current entered incomplete string. In current versions, the user will simply have to keep typing a few more characters to further narrow down the autocomplete suggestions to float the most probable string to the top of the autocomplete list.
 
@@ -131,3 +144,14 @@ _NSString+Levenshtein_ category extension was written by Mark Aufflick.
 If you make use of _MLPAutoCompleteTextField_, tell us about it! 
 Feel free to leave comments, likes, hatemail, etc at hello@mainloop.us
 
+
+
+More Stuff
+---------
+Be sure to check out these other libraries:
+
+[MLPSpotlight](https://github.com/EddyBorja/MLPSpotlight)<br />
+[UIColor+MLPFlatColors](https://github.com/EddyBorja/UIColor-MLPFlatColors)<br />
+[MLPAccessoryBadge](https://github.com/EddyBorja/MLPAccessoryBadge)<br />
+
+[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/119b08c6f189ea6973d4cf1d35e09c4c "githalytics.com")](http://githalytics.com/EddyBorja/MLPAutoCompleteTextField)
