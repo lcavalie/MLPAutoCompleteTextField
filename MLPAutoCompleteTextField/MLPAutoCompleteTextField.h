@@ -28,9 +28,12 @@
 
 @interface MLPAutoCompleteTextField : UITextField <UITableViewDataSource, UITableViewDelegate, MLPAutoCompleteSortOperationDelegate, MLPAutoCompleteFetchOperationDelegate>
 
++ (NSString *) accessibilityLabelForIndexPath:(NSIndexPath *)indexPath;
+
 @property (strong, readonly) UITableView *autoCompleteTableView;
 
-@property (strong) IBOutlet id <MLPAutoCompleteTextFieldDataSource> autoCompleteDataSource;
+// all delegates and datasources should be weak referenced
+@property (weak) IBOutlet id <MLPAutoCompleteTextFieldDataSource> autoCompleteDataSource;
 @property (weak) IBOutlet id <MLPAutoCompleteTextFieldDelegate> autoCompleteDelegate;
 
 @property (assign) NSTimeInterval autoCompleteFetchRequestDelay; //default is 0.1, if you fetch from a web service you may want this higher to prevent multiple calls happening very quickly.
@@ -41,6 +44,7 @@
 @property (assign) BOOL showAutoCompleteTableWhenEditingBegins; //only applies for drop down style autocomplete tables.
 @property (assign) BOOL disableAutoCompleteTableUserInteractionWhileFetching;
 @property (assign) BOOL autoCompleteTableAppearsAsKeyboardAccessory; //if set to TRUE, the autocomplete table will appear as a keyboard input accessory view rather than a drop down.
+@property (assign) BOOL shouldResignFirstResponderFromKeyboardAfterSelectionOfAutoCompleteRows; // default is TRUE
 
 
 @property (assign) BOOL autoCompleteTableViewHidden;
@@ -50,7 +54,9 @@
 @property (strong) NSString *autoCompleteRegularFontName;
 
 @property (assign) NSInteger maximumNumberOfAutoCompleteRows;
+@property (assign) CGFloat partOfAutoCompleteRowHeightToCut; // this number multiplied by autoCompleteRowHeight will be subtracted from total tableView height.
 @property (assign) CGFloat autoCompleteRowHeight;
+@property (nonatomic, assign) CGRect autoCompleteTableFrame;
 @property (assign) CGSize autoCompleteTableOriginOffset;
 @property (assign) CGFloat autoCompleteTableCornerRadius; //only applies for drop down style autocomplete tables.
 @property (nonatomic, assign) UIEdgeInsets autoCompleteContentInsets;
@@ -66,6 +72,7 @@
 
 - (void)registerAutoCompleteCellClass:(Class)cellClass forCellReuseIdentifier:(NSString *)reuseIdentifier;
 
+- (void)reloadData; //it will ask DataSource for data again
 @end
 
 
